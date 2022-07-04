@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="description" content="html contact form sendEmail">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <!-- attach CSS styles -->
+  <script src='https://kit.fontawesome.com/a076d05399.js'></script> <!-- font awesome -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+  <link href="https://fonts.googleapis.com/css2?family=Muli:wght@300&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="skullgame.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> <!-- font awesome -->
+  <link href="../fontawesome-free-5.15.3-web/css/all.css" rel="stylesheet"> <!-- font awesome 5 -->
+
+
+    <title>Volkan Levent Soylu // Beat the Skull Game</title>
+</head>
+<body>
+
+
+
+  <section class="skull-main">
+
+    <div class="skull-info">
+       <div class="skull-title">
+          <h1>Beat the Skull!</h1>       
+      </div>
+
+      <div class="start-button">
+        <button class="btn" id="start" type="button" onClick="startGame()">Start</button>
+      </div>
+      <div class="skull-score">
+        <h1>Score</h1>
+        <p class="score">0</p>
+      </div>
+      <div class="alarm-icon">
+        <i class="fab fa-algolia"></i>
+      </div>
+      <div class="countdown">
+        <span id="countdown-seconds">0</span>
+      </div> 
+
+    </div>
+
+  
+    <div class="game">
+      <div class="hole hole1">
+        <div class="skull"></div>
+      </div>
+      <div class="hole hole2">
+        <div class="skull"></div>
+      </div>
+      <div class="hole hole3">
+        <div class="skull"></div>
+      </div>
+      <div class="hole hole4">
+        <div class="skull"></div>
+      </div>
+      <div class="hole hole5">
+        <div class="skull"></div>
+      </div>
+      <div class="hole hole6">
+        <div class="skull"></div>
+      </div>
+    </div>
+  
+    
+  </section>
+
+    
+
+
+   <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+    <script>
+
+      const holes = document.querySelectorAll('.hole');
+      const scoreBoard = document.querySelector('.score');
+      const skulls = document.querySelectorAll('.skull');
+      let lastHole;
+      let timeUp = false;
+      let score = 0;
+
+      // a function specifies a timeline between random min-max values
+      function randomTime (min, max) {
+        return Math.round(Math.random() * (max - min) + min);
+      };
+
+      // function picks a random hole every time
+      function randomHole (holes)  {
+        const idx = Math.floor(Math.random() * holes.length); 
+        const hole = holes[idx]; // every holes are in an array
+        if ( hole === lastHole ) { // pick another hole if previous hole is the same with the corrent one
+            return randomHole(holes); 
+        }
+
+        lastHole = hole; // current hole can't be the same with previous one in line 100
+        return hole;
+    };
+
+    // Function executes the skulls to appear
+    function peep () {
+        const time = randomTime(500, 1500); // picks random time between 0.5 to 1.5 seconds
+        const hole = randomHole(holes); // picks random hole
+        hole.classList.add('up'); // adding up class
+        setTimeout (()=> { // removing up class when time is up
+            hole.classList.remove('up');
+            if(!timeUp) peep();
+        }, time);  
+    };
+
+    // Starting the game
+    function startGame () {
+        scoreBoard.textContent = 0; // Score is 0 every time the game starts
+        timeUp = false;
+        score = 0;
+        peep(); // peep function executes
+        setTimeout(()=> timeUp = true, 10000); // game executes for 10 seconds
+
+
+    // countdown starts
+
+    var timeleft = 10;
+    var countdown = setInterval(function(){
+      if(timeleft <= 0){
+        clearInterval(countdown);
+        document.getElementById("countdown-seconds").innerHTML = "Time is up";
+      } else {
+        document.getElementById("countdown-seconds").innerHTML = timeleft;
+      }
+      timeleft -= 1;
+    }, 1000);
+
+    }
+
+
+    // getting score every time skull got hit
+
+    function bonk (e) {
+    if(!e.isTrusted) return; // isTrusted means ensuring the mouse click
+    score++; 
+    this.classList.remove('up'); //removing up class so skull goes down when time is up
+    scoreBoard.textContent = score;
+    };
+
+    skulls.forEach(skull => skull.addEventListener('click', bonk)); 
+      
+
+
+  
+  </script>
+</body>
+</html>
